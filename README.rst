@@ -9,7 +9,7 @@ QuantPyCython has a hard dependency QuantPy, Cython. You should install them fir
 
 To install QunatPyCython itself, then simply run::
 
-    $ pip install qunatpycython
+    $ pip install quantpycython
 
 
 Bugs
