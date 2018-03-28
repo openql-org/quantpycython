@@ -3,7 +3,7 @@
 from os import path
 
 dir_setup = path.dirname(path.realpath(__file__))
-requires = [];
+requires = []
 
 from setuptools import setup, Command
 
@@ -44,4 +44,43 @@ if __name__ == '__main__':
             'Programming Language :: Python :: 3.6',
             ],
         install_requires=requires,
+        )
+
+    from distutils.core import setup
+    from distutils.extension import Extension
+    from Cython.Distutils import build_ext
+    import numpy
+    import os
+    if os.name=="posix":
+        setup(
+            cmdclass = {'build_ext': build_ext},
+            ext_modules = [Extension("quantpycython.executor.simulator.cython_simulator", ["./quantpycython/executor/simulator/cython_simulator.pyx"],language='c')],
+            include_dirs = [numpy.get_include()]
+        )
+        setup(
+            cmdclass = {'build_ext': build_ext},
+            ext_modules = [Extension("quantpycython.executor.simulator.cython_openmp_simulator", ["./quantpycython/executor/simulator/cython_openmp_simulator.pyx"],extra_compile_args=['-fopenmp'],extra_link_args=['-lgomp'],language='c')],
+            include_dirs = [numpy.get_include()]
+        )
+
+    elif os.name=="nt":
+        setup(
+            cmdclass = {'build_ext': build_ext},
+            ext_modules = [Extension(
+                "quantpycython.executor.simulator.cython_simulator",
+                ["./quantpycython/executor/simulator/cython_simulator.pyx"],
+                extra_compile_args=['/Ot', '/favor:INTEL64', '/EHsc', '/GA'],
+                language='c'
+                )],
+            include_dirs = [numpy.get_include()]
+        )
+        setup(
+            cmdclass = {'build_ext': build_ext},
+            ext_modules = [Extension(
+                "quantpycython.executor.simulator.cython_openmp_simulator",
+                ["./quantpycython/executor/simulator/cython_openmp_simulator.pyx"],
+                extra_compile_args=['/Ot', '/favor:INTEL64', '/EHsc', '/GA', '/openmp'],
+                language='c'
+                )],
+            include_dirs = [numpy.get_include()]
         )
